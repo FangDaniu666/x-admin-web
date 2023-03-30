@@ -13,6 +13,8 @@ public class SpringMVCConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .excludePathPatterns("/**/*.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg",
-                "/user/login","/user/info","/user/logout");
+                "/user/login","/user/info","/user/logout",
+                        //放行swagger
+                        "/error","/swagger-ui/**","/swagger-resources/**","/v3/**");
     }
 }

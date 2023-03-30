@@ -9,6 +9,8 @@ import com.daniu.entity.XUser;
 import com.daniu.service.IXUserService;
 import com.daniu.utils.JwtUtils;
 import com.daniu.utils.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.DigestUtils;
@@ -27,6 +29,7 @@ import java.util.Map;
  * @author FangDaniu
  * @since 2023-03-26
  */
+@Api(tags = "用户接口列表")
 @RestController
 @RequestMapping("/user")
 public class XUserController {
@@ -48,6 +51,7 @@ public class XUserController {
         return Result.success(results);
     }
 
+    @ApiOperation(value = "用户登录", notes = "用户登录")
     @PostMapping("/login")
     public Result<Map<String, Object>> userLogin(@RequestBody XUser user) {
         Map<String, Object> data = ixUserService.login(user);
@@ -57,6 +61,7 @@ public class XUserController {
         return Result.fail(20002, "用户名或密码错误");
     }
 
+    @ApiOperation(value = "用户信息", notes = "用户信息")
     @GetMapping("/info")
     public Result<Map<String, Object>> getUserInfo(@RequestParam("token") String token) {
         // 根据token获取用户信息,redis

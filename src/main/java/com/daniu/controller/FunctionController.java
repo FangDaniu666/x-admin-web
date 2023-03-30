@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.daniu.entity.XUser;
 import com.daniu.service.IXUserService;
 import com.daniu.utils.Result;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author FangDaniu
  * @since 2023-03-26
  */
+@Api(tags = "功能接口列表")
 @RestController
 @RequestMapping("/function")
 public class FunctionController {
