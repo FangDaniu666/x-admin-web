@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.daniu.entity.XUser;
 import com.daniu.mapper.XUserMapper;
 import com.daniu.service.IXUserService;
+import com.daniu.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +27,16 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements IXUserService {
-    @Autowired
-    private RedisTemplate redisTemplate;
+    /*@Autowired
+    private RedisTemplate redisTemplate;*/
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtils jwt;
 
     @Override
     public Map<String, Object> login(XUser user) {
-        //根据用户名和密码查询
+        /*//根据用户名和密码查询
         LambdaQueryWrapper<XUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(null != user.getUsername(), XUser::getUsername, user.getUsername());
 //        wrapper.eq(null != user.getPassword(), XUser::getPassword, user.getPassword());
@@ -49,18 +52,52 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
             data.put("token", key);
             return data;
         }
+        return null;*/
+        //根据用户名和密码查询
+        LambdaQueryWrapper<XUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(null != user.getUsername(), XUser::getUsername, user.getUsername());
+//        wrapper.eq(null != user.getPassword(), XUser::getPassword, user.getPassword());
+        XUser loginUser = this.baseMapper.selectOne(wrapper);
+        //结果不为空则生成token,并将用户信息存入redis
+        if (loginUser != null && passwordEncoder.matches(user.getPassword(), loginUser.getPassword())) {
+//            String key = "user:" + UUID.randomUUID();
+            //存入redis
+            loginUser.setPassword(null);
+//            redisTemplate.opsForValue().set(key,loginUser,30, TimeUnit.MINUTES);
+            //创建jwt
+            String key = jwt.createToken(loginUser,JwtUtils.JWT_Default_Expires);
+            //返回数据
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", key);
+            return data;
+        }
         return null;
     }
 
     @Override
     public Map<String, Object> getUserInfo(String token) {
-        String json = JSON.toJSONString(redisTemplate.opsForValue().get(token));
+        /*String json = JSON.toJSONString(redisTemplate.opsForValue().get(token));
         if (json != null) {
             XUser xUser = JSON.parseObject(json, XUser.class);
             Map<String, Object> data = new HashMap<>();
             data.put("name", xUser.getUsername());
             data.put("avatar", xUser.getAvatar());
-            data.put("avatar", xUser.getAvatar());
+
+            return data;
+        }
+        return null;*/
+        XUser user = null;
+        try {
+            user = jwt.parseToken(token, XUser.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        String json = JSON.toJSONString(redisTemplate.opsForValue().get(token));
+        if (user != null) {
+//            XUser xUser = JSON.parseObject(json, XUser.class);
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", user.getUsername());
+            data.put("avatar", user.getAvatar());
 
             return data;
         }
@@ -69,6 +106,7 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
 
     @Override
     public void logout(String token) {
-        redisTemplate.delete(token);
+//        redisTemplate.delete(token);
+
     }
 }

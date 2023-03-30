@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.daniu.entity.XUser;
 import com.daniu.service.IXUserService;
+import com.daniu.utils.JwtUtils;
 import com.daniu.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,8 @@ public class XUserController {
     private IXUserService ixUserService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtils jwt;
 
     /**
      * 得到所有xusers
