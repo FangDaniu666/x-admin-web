@@ -37,8 +37,6 @@ public class XUserController {
     private IXUserService ixUserService;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtUtils jwt;
 
     /**
      * 得到所有xusers

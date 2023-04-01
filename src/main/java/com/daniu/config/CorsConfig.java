@@ -14,6 +14,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:1145");
         configuration.addAllowedOrigin("http://192.168.0.102:1145");
+        configuration.addAllowedOrigin("http://192.168.0.101:1145");
         configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
