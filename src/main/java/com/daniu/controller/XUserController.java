@@ -96,7 +96,7 @@ public class XUserController {
         //添加用户
         //对password进行MD5加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        boolean save = ixUserService.save(user);
+        boolean save = ixUserService.addUser(user);
         if (save) {
             return Result.success(save);
         }
@@ -106,21 +106,21 @@ public class XUserController {
 
     @PutMapping
     public Result<?> updateUser(@RequestBody XUser user) {
-        ixUserService.updateById(user);
+        ixUserService.updateUser(user);
         user.setPassword(null);
         return Result.success();
     }
 
     @GetMapping("/{id}")
     public Result<XUser> getUserById(@PathVariable(value = "id") Integer id) {
-        XUser user = ixUserService.getById(id);
+        XUser user = ixUserService.getUserById(id);
         user.setPassword(null);
         return Result.success(user);
     }
 
     @DeleteMapping("/{id}")
     public Result<XUser> deleteUser(@PathVariable(value = "id") Integer id) {
-        ixUserService.removeById(id);
+        ixUserService.deleteUser(id);
         return Result.success();
     }
 }

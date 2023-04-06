@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.daniu.entity.Imgs;
 import com.daniu.service.impl.ImgsServiceImpl;
 import com.daniu.utils.HttpClientUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class SaveUrl {
     @Autowired
     private ImgsServiceImpl imgsService;
@@ -29,14 +31,14 @@ public class SaveUrl {
             if (bytes.length >= 10240) {
                 LambdaQueryWrapper<Imgs> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(null != url, Imgs::getUrl, url);
-                System.out.println(imgsService.list(wrapper));
+                log.info(imgsService.list(wrapper).toString());
                 if ("[]" == imgsService.list(wrapper).toString()) {
-                    System.out.println("--------------");
+                    log.info("--------------");
                     Imgs img = new Imgs();
                     img.setUrl(url);
                     imgsService.save(img);
-                    System.out.println(img.toString());
-                    System.out.println("++++++++++++++");
+                    log.info(img.toString());
+                    log.info("++++++++++++++");
                 }
                 TimeUnit.SECONDS.sleep(2);
             }

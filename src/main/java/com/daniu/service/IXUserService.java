@@ -20,4 +20,12 @@ public interface IXUserService extends IService<XUser> {
     Map<String, Object> getUserInfo(String token);
 
     void logout(String token);
+
+    boolean addUser(XUser user);
+
+    XUser getUserById(Integer id);
+
+    void updateUser(XUser user);
+
+    void deleteUser(Integer id);
 }

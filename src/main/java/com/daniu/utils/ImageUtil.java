@@ -55,11 +55,11 @@ public class ImageUtil {
     }
 
 
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         String url = "https://w.wallhaven.cc/full/rd/wallhaven-rddgwm.jpg";
         String base64Img = urlToBase64(url);
         System.out.println(base64Img);
         Base64ToImage(base64Img);
-    }
+    }*/
 }
 

@@ -1,21 +1,22 @@
 package com.daniu.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.daniu.entity.XUser;
+import com.daniu.entity.XUserRole;
 import com.daniu.mapper.XUserMapper;
+import com.daniu.mapper.XUserRoleMapper;
 import com.daniu.service.IXUserService;
 import com.daniu.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,6 +34,8 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtils jwt;
+    @Autowired
+    private XUserRoleMapper userRoleMapper;
 
     @Override
     public Map<String, Object> login(XUser user) {
@@ -65,7 +68,7 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
             loginUser.setPassword(null);
 //            redisTemplate.opsForValue().set(key,loginUser,30, TimeUnit.MINUTES);
             //创建jwt
-            String key = jwt.createToken(loginUser,JwtUtils.JWT_Default_Expires);
+            String key = jwt.createToken(loginUser, JwtUtils.JWT_Default_Expires);
             //返回数据
             Map<String, Object> data = new HashMap<>();
             data.put("token", key);
@@ -108,5 +111,50 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
     public void logout(String token) {
 //        redisTemplate.delete(token);
 
+    }
+
+    @Override
+    @Transactional
+    public boolean addUser(XUser user) {
+        this.baseMapper.insert(user);
+        if (user.getRoleIdList() != null) {
+            user.getRoleIdList().forEach(roleId -> {
+                userRoleMapper.insert(new XUserRole(null, user.getId(), roleId));
+            });
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public XUser getUserById(Integer id) {
+        XUser user = this.baseMapper.selectById(id);
+        LambdaQueryWrapper<XUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(XUserRole::getUserId, id);
+        List<XUserRole> userRoleList = userRoleMapper.selectList(wrapper);
+        List<Integer> roleIdList = userRoleList.stream().map(XUserRole::getRoleId).collect(Collectors.toList());
+        user.setRoleIdList(roleIdList);
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(XUser user) {
+        this.baseMapper.updateById(user);
+        LambdaQueryWrapper<XUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(XUserRole::getUserId, user.getId());
+        userRoleMapper.delete(wrapper);
+        if (user.getRoleIdList() != null) {
+            user.getRoleIdList().forEach(roleId -> userRoleMapper.insert(new XUserRole(null, user.getId(), roleId)));
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(Integer id) {
+        this.baseMapper.deleteById(id);
+        LambdaQueryWrapper<XUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(XUserRole::getUserId, id);
+        userRoleMapper.delete(wrapper);
     }
 }

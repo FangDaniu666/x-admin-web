@@ -4,12 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -17,32 +16,19 @@ import java.util.List;
  * </p>
  *
  * @author FangDaniu
- * @since 2023-03-26
+ * @since 2023-04-06
  */
-@TableName("x_user")
+@TableName("x_user_role")
 @Data
-public class XUser implements Serializable {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class XUserRole implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-
-    private String username;
-
-    private String password;
-
-    private String email;
-
-    private String phone;
-
-    private Integer status;
-
-    private String avatar;
-
-    private Integer deleted;
-
-    @TableField(exist = false)
-    private List<Integer> roleIdList;
+    @TableField("userId")
+    private Integer userId;
+    @TableField("roleId")
+    private Integer roleId;
 
 }

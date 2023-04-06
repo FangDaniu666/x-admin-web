@@ -1,0 +1,34 @@
+spring:
+  config:
+    activate:
+      on-profile: pro
+  datasource:
+    username: root
+    password: FangDaniu666
+    url: jdbc:mysql://localhost:3306/demo?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      connection-timeout: 10000
+      validation-timeout: 3000
+      idle-timeout: 60000
+      login-timeout: 5
+      max-lifetime: 60000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      read-only: false
+  redis:
+    port: 6379
+    host: localhost
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+
+x-admin-web-app:
+  configProperties: ./config.properties
+  enabledSchedulingTask: true
+  enabledJwtInterceptor: true
