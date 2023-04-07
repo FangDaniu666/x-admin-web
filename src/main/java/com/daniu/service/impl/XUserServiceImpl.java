@@ -2,10 +2,12 @@ package com.daniu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.daniu.entity.XMenu;
 import com.daniu.entity.XUser;
 import com.daniu.entity.XUserRole;
 import com.daniu.mapper.XUserMapper;
 import com.daniu.mapper.XUserRoleMapper;
+import com.daniu.service.IXMenuService;
 import com.daniu.service.IXUserService;
 import com.daniu.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
     private JwtUtils jwt;
     @Autowired
     private XUserRoleMapper userRoleMapper;
+    @Autowired
+    private IXMenuService menuService;
 
     @Override
     public Map<String, Object> login(XUser user) {
@@ -101,7 +105,12 @@ public class XUserServiceImpl extends ServiceImpl<XUserMapper, XUser> implements
             Map<String, Object> data = new HashMap<>();
             data.put("name", user.getUsername());
             data.put("avatar", user.getAvatar());
-
+            //根据userId查询roleList
+            List<String> roleList = this.baseMapper.getRoleNameByUserId(user.getId());
+            data.put("roleList", roleList);
+            //权限列表
+            List<XMenu> menuList = menuService.getMenuListByUserId(user.getId());
+            data.put("menuList", menuList);
             return data;
         }
         return null;

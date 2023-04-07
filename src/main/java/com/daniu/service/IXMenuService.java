@@ -2,6 +2,7 @@ package com.daniu.service;
 
 import com.daniu.entity.XMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ import java.util.List;
 public interface IXMenuService extends IService<XMenu> {
 
     List<XMenu> getAllMenu();
+
+    List<XMenu> getMenuListByUserId(Integer userId);
+
 }

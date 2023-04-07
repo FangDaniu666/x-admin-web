@@ -37,4 +37,19 @@ public class XMenuServiceImpl extends ServiceImpl<XMenuMapper, XMenu> implements
         }
         return menuList;
     }
+
+    @Override
+    public List<XMenu> getMenuListByUserId(Integer userId) {
+        //一级菜单
+        List<XMenu> menuList = this.baseMapper.getMenuListByUserId(userId, 0);
+        //填充子菜单
+        if (menuList != null) {
+            menuList.forEach(menu -> {
+                //更多级可以抽取次方法做递归
+                List<XMenu> subMenuList = this.baseMapper.getMenuListByUserId(userId, menu.getMenuId());
+                menu.setChildren(subMenuList);
+            });
+        }
+        return menuList;
+    }
 }
